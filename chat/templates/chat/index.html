@@ -1,0 +1,46 @@
+{% extends 'chat/base.html' %}
+
+{% block title %}Index{% endblock %}
+
+{% block header %}
+<h1>Chat</h1>
+<p class="caption">※チャットを表示したいグループを一つ選んでupdateしてください</p>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"
+        {% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<form action="{% url 'index' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="mode" value="__search_form__">
+    {{ search_form }}
+    <button>Search</button>
+</form>
+<hr>
+<form action="{% url 'index' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="mode" value="__check_form__">
+    {{ check_form }}
+    <button>update</button>
+</form>
+{% for item in contents %}
+<hr>
+<p class="message_public">
+{% if item.group.title == 'public' %}
+[public]
+{% endif %}</p>
+<p class="message_content">{{item.content}}</p>
+<p class="message_date">({{item.pub_date}})</p>
+<p class="message_owner">{{item.owner}}
+    <span class="message_counter">praise={{item.praise_count}}</span>
+    <a href="{% url 'praise' item.id %}"><button>praise</button></a>
+</p>
+{% endfor %}
+{% endblock %}
+
